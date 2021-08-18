@@ -1,0 +1,23 @@
+<<<<<<< HEAD
+pytelegrambotapi
+opencv-python
+pycryptodome
+pypiwin32
+pyautogui
+geocoder
+pyinstaller
+flaskwebgui
+flask
+wget
+=======
+pytelegrambotapi
+opencv-python
+pycryptodome
+pypiwin32
+pyautogui
+geocoder
+pyinstaller
+flaskwebgui
+flask
+wget
+>>>>>>> c2f7f8f66e88b7fe69520e180b98f499f96143c4
