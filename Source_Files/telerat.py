@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import os
 try:
     import telebot,json,base64,sqlite3,shutil,win32crypt,pyautogui,subprocess,geocoder
@@ -502,4 +501,3 @@ except:
 
 
 bot.polling()
->>>>>>> c2f7f8f66e88b7fe69520e180b98f499f96143c4
