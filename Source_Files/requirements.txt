@@ -1,0 +1,10 @@
+pytelegrambotapi
+opencv-python
+pycryptodome
+pypiwin32
+pyautogui
+geocoder
+pyinstaller
+flaskwebgui
+flask
+wget
