@@ -1,11 +1,16 @@
 import os
-try:
-    subprocess.run(['python --version'], check = True)
-except:
+
+os.system('python --version >> temp.txt')
+check = open('temp.txt','r').read()
+
+if 'Python' in check:
+    pass
+else:
     os.system('curl -s https://www.python.org/ftp/python/3.9.6/python-3.9.6-amd64.exe --output python.exe')
     os.system('python.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0 SimpleInstall=1')
     os.remove('python.exe')
     os.system('pip install -r Source_Files/requirements.txt')
+os.remove('temp.txt')
 
 from shutil import copyfile
 from flaskwebgui import FlaskUI
