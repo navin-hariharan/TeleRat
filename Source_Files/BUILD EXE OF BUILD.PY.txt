@@ -1,1 +1,1 @@
-pyinstaller --uac-admin --onefile --add-data "templates;templates" --add-data "static;static" --icon=static/icon.ico  -w -F build.py
+pyinstaller --uac-admin --onefile --icon=Source_Files/icon-build.ico  -w -F build.py

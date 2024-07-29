@@ -5,7 +5,7 @@ pypiwin32
 pyautogui
 geocoder
 pyinstaller
-flaskwebgui
-flask
 wget
 pynput
+pygame
+pywin32
